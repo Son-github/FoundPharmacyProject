@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  pharmacy-recommendation-redis:
+    container_name: pharmacy-recommendation-redis
+    build:
+      dockerfile: Dockerfile
+      context: ./redis
+    image: son718/pharmacy-recommendation-redis
+    ports:
+      - "6379:6379"
+
+  pharmacy-recommendation-database:
+    container_name: pharmacy-recommendation-database
+    build:
+      dockerfile: Dockerfile
+      context: ./database
+    image: son718/pharmacy-recommendation-database
+    environment:
+      - MARIADB_DATABASE=pharmacy-recommendation
+      - MARIADB_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - ./database/config:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+
+#  pharmacy-recommendation-app:
+#    container_name: pharmacy-recommendation-app
+#    build:
+#      dockerfile: Dockerfile
+#      context: .
+#    image: son718/pharmacy-recommendation-app
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - pharmacy-recommendation-redis
+#      - pharmacy-recommendation-database
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:mariadb://pharmacy-recommendation-database:3306/pharmacy-recommendation
+#      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_ROOT}
+#      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
